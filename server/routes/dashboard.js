@@ -20,11 +20,13 @@ router.get('/stats', async (req, res) => {
   try {
     const countForDay = (days) => {
       const { start, end } = dayRange(days);
-      return Student.countDocuments({ dueDate: { $gte: start, $lt: end }, status: 'active' });
+      return Student.countDocuments({ dueDate: { $gte: start, $lt: end } });
     };
 
+    // "Active" is computed live from dueDate (same definition Student List uses),
+    // not a stored field.
     const [totalStudents, threeDaysLeft, twoDaysLeft, lastDay] = await Promise.all([
-      Student.countDocuments({}),
+      Student.countDocuments({ dueDate: { $gte: startOfToday() } }),
       countForDay(3),
       countForDay(2),
       countForDay(0),
