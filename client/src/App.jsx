@@ -5,6 +5,7 @@ import Login from './pages/Login.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import AdmissionForm from './pages/AdmissionForm.jsx';
 import SeatFees from './pages/SeatFees.jsx';
+import SeatAvailability from './pages/SeatAvailability.jsx';
 import StudentList from './pages/StudentList.jsx';
 import EditStudent from './pages/EditStudent.jsx';
 import ReminderList from './pages/ReminderList.jsx';
@@ -37,6 +38,7 @@ export default function App() {
         <Route index element={<Dashboard />} />
         <Route path="admission" element={<AdmissionForm />} />
         <Route path="seat-fees" element={<SeatFees />} />
+        <Route path="seat-availability" element={<SeatAvailability />} />
         <Route path="students" element={<StudentList status="active" />} />
         <Route path="inactive-students" element={<StudentList status="inactive" />} />
         <Route path="students/:id/edit" element={<EditStudent />} />

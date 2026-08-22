@@ -1,6 +1,8 @@
 const express = require('express');
 const SeatFee = require('../models/SeatFee');
+const Student = require('../models/Student');
 const { protect } = require('../middleware/auth');
+const { startOfToday } = require('../utils/dates');
 
 const router = express.Router();
 
@@ -15,6 +17,39 @@ router.get('/', async (req, res) => {
     const seatFees = await SeatFee.find();
     seatFees.sort((a, b) => Number(a.seatNumber) - Number(b.seatNumber));
     res.json(seatFees);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+/**
+ * GET /api/seat-fees/availability
+ * Every seat cross-referenced with its current active occupant (if any).
+ * A seat counts as occupied only while its student's dueDate hasn't passed -
+ * the same live "active" definition used everywhere else, not a stored flag.
+ */
+router.get('/availability', async (req, res) => {
+  try {
+    const [seatFees, activeStudents] = await Promise.all([
+      SeatFee.find(),
+      Student.find({ dueDate: { $gte: startOfToday() } }).select('name seatNumber dueDate'),
+    ]);
+
+    const occupantBySeat = new Map(activeStudents.map((s) => [s.seatNumber, s]));
+
+    const rows = seatFees.map((sf) => {
+      const occupant = occupantBySeat.get(sf.seatNumber);
+      return {
+        seatNumber: sf.seatNumber,
+        fees: sf.fees,
+        occupied: !!occupant,
+        studentName: occupant?.name || null,
+        dueDate: occupant?.dueDate || null,
+      };
+    });
+    rows.sort((a, b) => Number(a.seatNumber) - Number(b.seatNumber));
+
+    res.json(rows);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
