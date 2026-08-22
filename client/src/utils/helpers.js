@@ -2,6 +2,9 @@
  * Shared client-side helpers.
  */
 
+// Format a number as Indian Rupees, e.g. "₹1,25,000"
+export const formatINR = (value) => `₹${Number(value || 0).toLocaleString('en-IN')}`;
+
 // Format a date value as e.g. "25 Jul 2026"
 export const formatDate = (value) => {
   if (!value) return '-';

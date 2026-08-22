@@ -37,6 +37,23 @@ router.get('/stats', async (req, res) => {
 });
 
 /**
+ * GET /api/dashboard/revenue-by-year
+ * Total fees (feeAmount) grouped by the calendar year of admissionDate -
+ * the only fee/date fields the current Admission Form actually collects.
+ */
+router.get('/revenue-by-year', async (req, res) => {
+  try {
+    const rows = await Student.aggregate([
+      { $group: { _id: { $year: '$admissionDate' }, revenue: { $sum: '$feeAmount' } } },
+      { $sort: { _id: 1 } },
+    ]);
+    res.json(rows.map((r) => ({ year: r._id, revenue: r.revenue })));
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+/**
  * GET /api/dashboard/overview
  * Everything the rich dashboard needs in one call:
  *   seats:    { total, occupied, available }
