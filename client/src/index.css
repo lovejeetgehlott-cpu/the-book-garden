@@ -1172,14 +1172,10 @@ tbody tr:last-child td {
     padding: 0 5%;
   }
 
-  /* Logo above the name instead of side-by-side, centered */
   .sidebar-brand {
-    flex-direction: column;
-    gap: 4px;
     padding-left: 0;
     padding-right: 0;
-    font-size: 12px;
-    letter-spacing: 0.03em;
+    font-size: 15px;
   }
 
   .brand-logo {
