@@ -15,6 +15,8 @@ import ErrorMessage from '../components/ErrorMessage.jsx';
 import { IconStudents, IconClock, IconBell } from '../components/Icons.jsx';
 import { formatINR } from '../utils/helpers';
 
+const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 /** Chart tooltip styled to match the app's card surface. */
 const RevenueTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
@@ -27,7 +29,7 @@ const RevenueTooltip = ({ active, payload, label }) => {
 };
 
 /**
- * Dashboard: four clickable summary cards, plus a year-wise revenue chart.
+ * Dashboard: four clickable summary cards, plus a month-wise revenue chart.
  * Clicking a card opens the matching list page.
  */
 export default function Dashboard() {
@@ -38,7 +40,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    Promise.all([api.get('/dashboard/stats'), api.get('/dashboard/revenue-by-year')])
+    Promise.all([api.get('/dashboard/stats'), api.get('/dashboard/revenue-by-month')])
       .then(([statsRes, revenueRes]) => {
         setStats(statsRes.data);
         setRevenue(revenueRes.data);
@@ -56,7 +58,10 @@ export default function Dashboard() {
     { label: 'Last Day', value: stats?.lastDay, to: '/reminders/0', cls: 'card-red', Icon: IconBell },
   ];
 
-  const chartData = (revenue || []).map((r) => ({ ...r, label: String(r.year) }));
+  const chartData = (revenue || []).map((r) => ({
+    ...r,
+    label: `${MONTH_NAMES[r.month - 1]} ${r.year}`,
+  }));
   const totalRevenue = chartData.reduce((sum, r) => sum + r.revenue, 0);
 
   return (
@@ -81,7 +86,7 @@ export default function Dashboard() {
 
       <div className="card revenue-card">
         <div className="revenue-card-head">
-          <h3>Revenue by Year</h3>
+          <h3>Revenue by Month</h3>
           {chartData.length > 0 && <span className="revenue-total">{formatINR(totalRevenue)} total</span>}
         </div>
         {chartData.length === 0 ? (
