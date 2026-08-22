@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment secrets
+.env
+
+# Local Claude Code settings (personal, not shared)
+.claude/settings.local.json
+
+# Local data backups - may contain real student personal data, never commit
+db-backup-*/
+
+# OS files
+.DS_Store
+Thumbs.db
