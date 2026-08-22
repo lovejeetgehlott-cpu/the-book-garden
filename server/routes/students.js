@@ -62,14 +62,20 @@ router.use(protect);
 
 /**
  * GET /api/students
- * Optional ?search= filters by name, phone, mobile, email, studentId,
- * seatNumber or membershipPlan (case-insensitive).
+ * Optional ?search= filters by name, phone, mobile, email, studentId or
+ * seatNumber (case-insensitive). Sorted by seat number ascending - seatNumber
+ * is stored as a string, so a numeric compare avoids "1, 10, 11, 2, ..." order.
+ * Students with no seat assigned sort to the end.
  */
 router.get('/', async (req, res) => {
   try {
     const students = await Student.find({ ...searchFilter(req.query.search), ...statusFilter(req.query.status) })
-      .sort({ createdAt: -1 })
       .populate('createdBy', 'name email');
+    students.sort((a, b) => {
+      const aSeat = a.seatNumber ? Number(a.seatNumber) : Infinity;
+      const bSeat = b.seatNumber ? Number(b.seatNumber) : Infinity;
+      return aSeat - bSeat;
+    });
     res.json(students);
   } catch (err) {
     res.status(500).json({ message: err.message });

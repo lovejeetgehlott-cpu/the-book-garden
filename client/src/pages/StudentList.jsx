@@ -101,12 +101,12 @@ export default function StudentList({ status = '' }) {
   // Download the current (filtered) list as students.xlsx
   const exportStudents = () => {
     const rows = students.map((s) => ({
+      'Seat No': s.seatNumber || '-',
       'Student ID': s.studentId || '-',
       'Name': s.name,
       'Email': s.email || '-',
       'Phone Number': s.phone || '-',
       'Home Number': s.mobile || '-',
-      'Seat No': s.seatNumber || '-',
       'Fee': s.feeAmount,
       'Fees Type': s.paymentMode || '-',
       'Transaction ID': s.transactionId || '-',
@@ -192,10 +192,10 @@ export default function StudentList({ status = '' }) {
           <table>
             <thead>
               <tr>
+                <th>Seat No</th>
                 <th>Name</th>
                 <th>Phone Number</th>
                 <th>Home Number</th>
-                <th>Seat No</th>
                 <th>Fee</th>
                 <th>Fees Type</th>
                 <th>Expiry Date</th>
@@ -214,6 +214,7 @@ export default function StudentList({ status = '' }) {
               ) : (
                 students.map((s) => (
                   <tr key={s._id}>
+                    <td className="cell-strong">{s.seatNumber || '-'}</td>
                     <td className="cell-strong">
                       {s.name}
                       {s.studentId && (
@@ -224,7 +225,6 @@ export default function StudentList({ status = '' }) {
                     </td>
                     <td>{s.phone || '-'}</td>
                     <td>{s.mobile || '-'}</td>
-                    <td>{s.seatNumber || '-'}</td>
                     <td>₹{s.feeAmount}</td>
                     <td>{s.paymentMode || '-'}</td>
                     <td>{formatDate(s.dueDate)}</td>
