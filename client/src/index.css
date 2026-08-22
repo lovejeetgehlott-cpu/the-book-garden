@@ -1166,9 +1166,25 @@ tbody tr:last-child td {
     padding: 12px 14px;
   }
 
+  /* Edge breathing room on both sides; the brand's own padding would
+     otherwise stack with this, so it's zeroed out below. */
+  .topbar {
+    padding: 0 5%;
+  }
+
+  .sidebar-brand {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
   .brand-logo {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .nav-toggle svg {
+    width: 28px;
+    height: 28px;
   }
 
   .app-content {
@@ -1179,10 +1195,6 @@ tbody tr:last-child td {
 @media (max-width: 600px) {
   .sidebar-brand .brand-text {
     display: none;
-  }
-
-  .sidebar-brand {
-    padding: 12px 14px;
   }
 
   .form-card {
