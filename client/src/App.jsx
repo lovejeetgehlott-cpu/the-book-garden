@@ -37,7 +37,7 @@ export default function App() {
         <Route index element={<Dashboard />} />
         <Route path="admission" element={<AdmissionForm />} />
         <Route path="seat-fees" element={<SeatFees />} />
-        <Route path="students" element={<StudentList />} />
+        <Route path="students" element={<StudentList status="active" />} />
         <Route path="inactive-students" element={<StudentList status="inactive" />} />
         <Route path="students/:id/edit" element={<EditStudent />} />
         {/* The three reminder lists share one page, parameterised by days */}
