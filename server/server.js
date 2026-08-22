@@ -11,7 +11,10 @@ const seedSuperAdmin = require('./seed/seedAdmin');
 const app = express();
 
 // Middleware
-app.use(cors());
+// CLIENT_URL scopes CORS to the deployed frontend's origin; unset (local
+// dev) allows any origin, since the Vite proxy makes requests same-origin
+// anyway and there's nothing sensitive to protect against on localhost.
+app.use(cors(process.env.CLIENT_URL ? { origin: process.env.CLIENT_URL } : undefined));
 // Larger limit for base64 profile photos on student create/update
 app.use(express.json({ limit: '5mb' }));
 

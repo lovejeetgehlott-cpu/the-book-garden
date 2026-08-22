@@ -2,11 +2,12 @@ import axios from 'axios';
 
 /**
  * Pre-configured Axios instance.
- * - baseURL /api is proxied to the Express server by Vite (see vite.config.js)
+ * - baseURL: VITE_API_URL when set (the deployed backend's URL); otherwise
+ *   '/api', proxied to the local Express server by Vite (see vite.config.js)
  * - attaches the JWT from localStorage on every request
  * - on a 401 response, clears the session and redirects to /login
  */
-const api = axios.create({ baseURL: '/api' });
+const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || '/api' });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
