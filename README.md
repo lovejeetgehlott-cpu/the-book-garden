@@ -57,8 +57,8 @@ MONGO_URI=mongodb://127.0.0.1:27017/library_management
 JWT_SECRET=change_this_super_secret_key_in_production
 PORT=5000
 SEED_ADMIN_NAME=Super Admin
-SEED_ADMIN_EMAIL=tbg1884@gmail.com
-SEED_ADMIN_PASSWORD=tbG@hrdk2026
+SEED_ADMIN_EMAIL=your_admin_email_here
+SEED_ADMIN_PASSWORD=your_admin_password_here
 ```
 
 Start the API:
@@ -86,12 +86,10 @@ Express server on port 5000.
 
 ### 3. Login
 
-| Email | Password | Role |
-| --- | --- | --- |
-| `tbg1884@gmail.com` | `tbG@hrdk2026` | super-admin |
-
-> Change these in `server/.env` **before** the first run, or change the
-> password later from the Users page.
+Log in with whatever `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` you set in
+`server/.env` before the first run (role: super-admin). Credentials are
+never committed to this repo — check your own local `.env` file, or change
+the password later from the Users page.
 
 ## API reference
 
