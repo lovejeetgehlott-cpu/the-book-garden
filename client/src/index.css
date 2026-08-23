@@ -1203,12 +1203,8 @@ tbody tr:last-child td {
     gap: 14px;
   }
 
-  /* Date of Joining / End Date: bumped to the top and enlarged - the
-     fields admins reach for first when admitting on a phone */
-  .field-dates {
-    order: -1;
-  }
-
+  /* Date of Joining / End Date: enlarged, kept at their normal spot
+     (end of the form) */
   .field-dates input {
     padding: 14px 12px;
     font-size: 16px;
