@@ -36,9 +36,12 @@ export const daysLeft = (dueDate) => {
 /**
  * Build a wa.me link with a URL-encoded message.
  * Strips every non-digit from the phone so "+91 98765 43210" works too.
+ * A bare 10-digit number (country code left off when the student was
+ * entered) gets India's "91" prefixed - wa.me silently fails without it.
  */
 export const whatsappLink = (phone, message) => {
-  const digits = String(phone || '').replace(/\D/g, '');
+  let digits = String(phone || '').replace(/\D/g, '');
+  if (digits.length === 10) digits = `91${digits}`;
   return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
 };
 
