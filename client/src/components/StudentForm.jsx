@@ -8,6 +8,7 @@ const empty = {
   phone: '',
   mobile: '', // "Home Number" — a second contact number, separate from Phone Number
   seatNumber: '',
+  shift: 'Full Day',
   feeAmount: '',
   paymentMode: '',
   transactionId: '',
@@ -103,6 +104,14 @@ export default function StudentForm({ initial, onSubmit, submitting, submitLabel
             {form.seatNumber && !seatOptions.some((sf) => sf.seatNumber === form.seatNumber) && (
               <option value={form.seatNumber}>{form.seatNumber}</option>
             )}
+          </select>
+        </label>
+        <label className="field">
+          <span>Shift</span>
+          <select value={form.shift} onChange={set('shift')}>
+            <option value="Morning">Morning</option>
+            <option value="Evening">Evening</option>
+            <option value="Full Day">Full Day</option>
           </select>
         </label>
         <label className="field">

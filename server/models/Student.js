@@ -44,8 +44,8 @@ const studentSchema = new mongoose.Schema(
     },
     shift: {
       type: String,
-      enum: ['', 'Morning', 'Afternoon', 'Evening', 'Full Day'],
-      default: '',
+      enum: ['Morning', 'Evening', 'Full Day'],
+      default: 'Full Day',
     },
     seatStatus: {
       type: String,
