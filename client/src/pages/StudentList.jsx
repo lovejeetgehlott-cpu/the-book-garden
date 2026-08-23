@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import Spinner from '../components/Spinner.jsx';
 import ErrorMessage from '../components/ErrorMessage.jsx';
-import { formatDate, daysLeft } from '../utils/helpers';
+import { formatDate, daysLeft, whatsappLink } from '../utils/helpers';
 import { exportToExcel } from '../utils/exportExcel';
 import { IconWhatsApp, IconSms, IconMail, IconExcel } from '../components/Icons.jsx';
 
@@ -37,6 +37,7 @@ export default function StudentList({ status = '' }) {
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState('');
   const [result, setResult] = useState('');
+  const [waQueue, setWaQueue] = useState(null); // { list, index } while a WhatsApp campaign is in progress
   const navigate = useNavigate();
   const isInactiveList = status === 'inactive';
   const pageTitle = isInactiveList ? 'Inactive Students' : 'Student List';
@@ -44,6 +45,7 @@ export default function StudentList({ status = '' }) {
   const fetchStudents = useCallback(async (query = '') => {
     setLoading(true);
     setError('');
+    setWaQueue(null);
     try {
       const params = {
         ...(query ? { search: query } : {}),
@@ -69,14 +71,14 @@ export default function StudentList({ status = '' }) {
   }, [search, fetchStudents]);
 
   // Bulk-send the typed message to every student in the current (filtered)
-  // list via the gateway. channel: 'whatsapp' | 'sms' | 'email'
+  // list via the gateway. channel: 'sms' | 'email'
   const sendAll = async (channel) => {
     const text = message.trim();
     if (!text) {
       setError('Type a message before sending.');
       return;
     }
-    const label = { whatsapp: 'WhatsApp', sms: 'SMS', email: 'Email' }[channel];
+    const label = { sms: 'SMS', email: 'Email' }[channel];
     if (!window.confirm(`Send this ${label} message to all ${students.length} student(s) shown?`)) {
       return;
     }
@@ -95,6 +97,45 @@ export default function StudentList({ status = '' }) {
       setError(err.response?.data?.message || `Failed to send ${label} messages`);
     } finally {
       setSending('');
+    }
+  };
+
+  // WhatsApp All: free wa.me-based flow, no gateway/API needed. Since a
+  // browser only allows one popup per user click (and WhatsApp itself needs
+  // a manual "Send" tap), this opens one chat per click and walks through
+  // the list - "WhatsApp All" opens the first, then the button becomes
+  // "Next WhatsApp (i/N)" for the rest.
+  const sendWhatsAppAll = () => {
+    const text = message.trim();
+    if (!text) {
+      setError('Type a message before sending.');
+      return;
+    }
+    const recipients = students.filter((s) => s.phone);
+    if (!recipients.length) {
+      setError('No students with a phone number in this list.');
+      return;
+    }
+    if (!window.confirm(`Open a WhatsApp chat for all ${recipients.length} student(s) shown, one by one?`)) {
+      return;
+    }
+    setError('');
+    setResult('');
+    window.open(whatsappLink(recipients[0].phone, text), '_blank', 'noopener');
+    setWaQueue(recipients.length > 1 ? { list: recipients, index: 1 } : null);
+    if (recipients.length === 1) setResult('WhatsApp: opened chat for 1 student. Tap Send in the tab to finish.');
+  };
+
+  const sendWhatsAppNext = () => {
+    if (!waQueue) return;
+    const { list, index } = waQueue;
+    window.open(whatsappLink(list[index].phone, message.trim()), '_blank', 'noopener');
+    const nextIndex = index + 1;
+    if (nextIndex >= list.length) {
+      setResult(`WhatsApp: opened chat for all ${list.length} student(s). Tap Send in each tab to finish.`);
+      setWaQueue(null);
+    } else {
+      setWaQueue({ list, index: nextIndex });
     }
   };
 
@@ -159,12 +200,17 @@ export default function StudentList({ status = '' }) {
           <span className="broadcast-count">{students.length} recipient(s)</span>
           <button
             className="btn btn-small btn-whatsapp"
-            onClick={() => sendAll('whatsapp')}
-            disabled={students.length === 0 || !message.trim() || Boolean(sending)}
+            onClick={waQueue ? sendWhatsAppNext : sendWhatsAppAll}
+            disabled={students.length === 0 || !message.trim()}
           >
             <IconWhatsApp />
-            {sending === 'whatsapp' ? 'Sending…' : 'WhatsApp All'}
+            {waQueue ? `Next WhatsApp (${waQueue.index + 1}/${waQueue.list.length})` : 'WhatsApp All'}
           </button>
+          {waQueue && (
+            <button className="btn btn-small btn-outline" onClick={() => setWaQueue(null)}>
+              Cancel
+            </button>
+          )}
           <button
             className="btn btn-small btn-outline"
             onClick={() => sendAll('sms')}
