@@ -20,6 +20,8 @@ export default function SeatAvailability() {
   const [seats, setSeats] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  // null = show all; true = empty seats only; false = occupied seats only
+  const [filter, setFilter] = useState(null);
 
   useEffect(() => {
     api
@@ -33,6 +35,9 @@ export default function SeatAvailability() {
 
   const emptyCount = seats.filter((s) => !s.occupied).length;
   const occupiedCount = seats.length - emptyCount;
+  const visibleSeats = filter === null ? seats : seats.filter((s) => s.occupied !== filter);
+  // Clicking the already-active card clears the filter back to "all"
+  const toggleFilter = (value) => setFilter((f) => (f === value ? null : value));
 
   return (
     <div>
@@ -40,14 +45,20 @@ export default function SeatAvailability() {
       <ErrorMessage message={error} />
 
       <div className="cards-grid">
-        <div className="stat-card card-blue">
+        <button
+          className={`stat-card card-blue${filter === true ? ' stat-card-active' : ''}`}
+          onClick={() => toggleFilter(true)}
+        >
           <span className="stat-value">{emptyCount}</span>
           <span className="stat-label">Empty Seats</span>
-        </div>
-        <div className="stat-card card-orange">
+        </button>
+        <button
+          className={`stat-card card-orange${filter === false ? ' stat-card-active' : ''}`}
+          onClick={() => toggleFilter(false)}
+        >
           <span className="stat-value">{occupiedCount}</span>
           <span className="stat-label">Occupied Seats</span>
-        </div>
+        </button>
       </div>
 
       <div className="card table-wrap" style={{ marginTop: 20 }}>
@@ -62,14 +73,18 @@ export default function SeatAvailability() {
             </tr>
           </thead>
           <tbody>
-            {seats.length === 0 ? (
+            {visibleSeats.length === 0 ? (
               <tr>
                 <td colSpan="5" className="empty-row">
-                  No seats set up yet.
+                  {seats.length === 0
+                    ? 'No seats set up yet.'
+                    : filter === true
+                    ? 'No empty seats right now.'
+                    : 'No occupied seats right now.'}
                 </td>
               </tr>
             ) : (
-              seats.map((s) => (
+              visibleSeats.map((s) => (
                 <tr key={s.seatNumber}>
                   <td className="cell-strong">{s.seatNumber}</td>
                   <td>{formatINR(s.fees)}</td>
