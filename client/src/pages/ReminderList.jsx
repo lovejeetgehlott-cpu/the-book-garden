@@ -67,6 +67,7 @@ export default function ReminderList({ days }) {
       Name: s.name,
       Phone: s.phone,
       Seat: s.seatNumber || '-',
+      Shift: s.shift || '-',
       'Fee Amount': s.feeAmount,
       'Due Date': formatDate(s.dueDate),
     }));
@@ -122,6 +123,7 @@ export default function ReminderList({ days }) {
                 <th>Name</th>
                 <th>Phone</th>
                 <th>Seat</th>
+                <th>Shift</th>
                 <th>Fee Amount</th>
                 <th>Due Date</th>
                 <th>Reminder</th>
@@ -130,7 +132,7 @@ export default function ReminderList({ days }) {
             <tbody>
               {empty ? (
                 <tr>
-                  <td colSpan="6" className="empty-row">
+                  <td colSpan="7" className="empty-row">
                     No renewals due in this list — all clear.
                   </td>
                 </tr>
@@ -140,6 +142,7 @@ export default function ReminderList({ days }) {
                     <td className="cell-strong">{s.name}</td>
                     <td>{s.phone}</td>
                     <td>{s.seatNumber || '-'}</td>
+                    <td>{s.shift || '-'}</td>
                     <td>₹{s.feeAmount}</td>
                     <td>{formatDate(s.dueDate)}</td>
                     <td>

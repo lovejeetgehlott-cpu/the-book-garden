@@ -143,6 +143,7 @@ export default function StudentList({ status = '' }) {
   const exportStudents = () => {
     const rows = students.map((s) => ({
       'Seat No': s.seatNumber || '-',
+      'Shift': s.shift || '-',
       'Student ID': s.studentId || '-',
       'Name': s.name,
       'Email': s.email || '-',
@@ -242,6 +243,7 @@ export default function StudentList({ status = '' }) {
                 <th>Name</th>
                 <th>Phone Number</th>
                 <th>Home Number</th>
+                <th>Shift</th>
                 <th>Fee</th>
                 <th>Fees Type</th>
                 <th>Expiry Date</th>
@@ -253,7 +255,7 @@ export default function StudentList({ status = '' }) {
             <tbody>
               {students.length === 0 ? (
                 <tr>
-                  <td colSpan="10" className="empty-row">
+                  <td colSpan="11" className="empty-row">
                     {isInactiveList ? 'No inactive students found.' : 'No students found.'}
                   </td>
                 </tr>
@@ -271,6 +273,7 @@ export default function StudentList({ status = '' }) {
                     </td>
                     <td>{s.phone || '-'}</td>
                     <td>{s.mobile || '-'}</td>
+                    <td>{s.shift || '-'}</td>
                     <td>₹{s.feeAmount}</td>
                     <td>{s.paymentMode || '-'}</td>
                     <td>{formatDate(s.dueDate)}</td>
