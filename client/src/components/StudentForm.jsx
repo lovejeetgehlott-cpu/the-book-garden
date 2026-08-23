@@ -155,11 +155,11 @@ export default function StudentForm({ initial, onSubmit, submitting, submitLabel
             inputMode="numeric"
           />
         </label>
-        <label className="field">
+        <label className="field field-dates">
           <span>Date of Joining *</span>
           <input type="date" value={form.admissionDate} onChange={set('admissionDate')} required />
         </label>
-        <label className="field">
+        <label className="field field-dates">
           <span>End Date *</span>
           <input type="date" value={form.dueDate} onChange={set('dueDate')} required />
         </label>
